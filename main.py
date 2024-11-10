@@ -32,7 +32,7 @@ def check_exit():
 
     return False
 
-width = 40
+width = 20
 offset = (10, 10)
 
 def draw():
@@ -75,17 +75,17 @@ RIGHT = 2
 DOWN = 4
 LEFT = 8
 
-# HEIGHT = 49
-# WIDTH = 74
-HEIGHT = 20
-WIDTH = 20
+HEIGHT = 49
+WIDTH = 74
+# HEIGHT = 10
+# WIDTH = 10
 
 
 opposits = {UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT}
 movements = {IDLE: (0, 0), UP: (0, -1), RIGHT: (1, 0), DOWN: (0, 1), LEFT: (-1, 0)}
 
-# start = (WIDTH // 2, HEIGHT // 2)
-start = (0, 0)
+start = (WIDTH // 2, HEIGHT // 2)
+# start = (0, 0)
 def init_desk() -> List[List[Cell|None]]:
     return [[Cell() for y in range(HEIGHT)] for x in range(WIDTH)]
 
@@ -147,24 +147,25 @@ while not check_exit():
     last_cell = cells[-1] if len(cells) > 0 else last_cell
 
     if len(cells) > 0:
-        old_bang = bang
-        bang = process_next_cell(bang)
-        processed += 1
-        choice = random.choice(range(1000))
-        # if bang != old_bang:
-        if processed > 0:
-            processed = 0
-            draw()
-            # time.sleep(0.1)
-        #time.sleep(0.03)
+        if True or passkeye():
+            old_bang = bang
+            bang = process_next_cell(bang)
+            processed += 1
+            choice = random.choice(range(1000))
+            # if bang != old_bang:
+            if processed > 100:
+                processed = 0
+                draw()
+                # time.sleep(0.2)
+            #time.sleep(0.03)
     else:
         draw()
 
     # if passkeye() or len(cells) == 0:
     if passkeye():
         desk = init_desk()
-        cells = [last_cell]
-        # time.sleep(2)
+        cells = [(random.choice(range(WIDTH)), random.choice(range(HEIGHT)))]
+        time.sleep(0.1)
 
 # pygame.draw.rect(screen, (255, 100, 0), (10, 10, 80, 80))
 
