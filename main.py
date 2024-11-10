@@ -33,8 +33,8 @@ def check_exit():
 if __name__ == "__main__":
     HEIGHT = 49
     WIDTH = 74
-    # HEIGHT = 10
-    # WIDTH = 10
+    # HEIGHT = 20
+    # WIDTH = 20
 
     start = (WIDTH // 2, HEIGHT // 2)
     # start = (0, 0)
@@ -65,11 +65,6 @@ if __name__ == "__main__":
             [(750, Choice.random), (10000, Choice.newest)]
         ],
         [
-            'oldest',
-            Choice.nothing,
-            [(10000, Choice.oldest)]
-        ],
-        [
             'deadend-oldest',
             Choice.oldest,
             [(10000, Choice.newest)]
@@ -90,7 +85,8 @@ if __name__ == "__main__":
             processed = 0
             renderer.draw(desk)
 
-        if passkey():
+        if passkey() or len(maze.cells) == 0:
+            renderer.draw(desk)
             desk = Desk(WIDTH, HEIGHT)
             maze = Maze(desk)
             variant = variants[generated % len(variants)]
@@ -98,6 +94,6 @@ if __name__ == "__main__":
             print(variant[0])
             maze.on_dead_end = variant[1]
             maze.choices = variant[2]
-            time.sleep(0.5)
+            time.sleep(2)
 
     renderer.quit()

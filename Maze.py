@@ -16,7 +16,7 @@ class Maze:
         self.on_dead_end: Choice = Choice.nothing
         self.choices = [(750, Choice.newest), (10000, Choice.random)]
         self.desk = desk
-        self.cells: List[Tuple[int, int]] = [(0, 0)]
+        self.cells: List[Tuple[int, int]] = self.desk.predefined if len(self.desk.predefined) > 0 else [(0, 0)]
 
     def __random_cell(self) -> Tuple[int, int]:
         return random.choice(self.cells)
