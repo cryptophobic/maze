@@ -5,6 +5,7 @@ from typing import List, Tuple
 import operator
 
 import pygame
+from pygame.mixer_music import queue
 
 from Desk import Desk
 from Maze import Maze, Choice
@@ -35,6 +36,8 @@ if __name__ == "__main__":
     WIDTH = 74
     # HEIGHT = 20
     # WIDTH = 20
+    # HEIGHT = int(49 * 6.5)
+    # WIDTH = int(74 * 6.5)
 
     start = (WIDTH // 2, HEIGHT // 2)
     # start = (0, 0)
@@ -73,7 +76,13 @@ if __name__ == "__main__":
             'deadend-random',
             Choice.random,
             [(10000, Choice.newest)]
+        ],
+        [
+            'oldest',
+            Choice.nothing,
+            [(10000, Choice.oldest)]
         ]
+
     ]
 
     processed = 0
@@ -81,12 +90,22 @@ if __name__ == "__main__":
     while not check_exit():
         processed += 1
         maze.process_next_cell()
-        if processed > 20:
+        if processed > 10:
             processed = 0
             renderer.draw(desk)
 
         if passkey() or len(maze.cells) == 0:
+            path = desk.solution((0, 0), (WIDTH - 1, HEIGHT - 1))
+            for (x, y) in path:
+                desk[x][y].fixed = False
+                renderer.draw(desk)
+
+            for (x, y) in path:
+                desk[x][y].fixed = True
+                desk[x][y].passing = True
+
             renderer.draw(desk)
+            time.sleep(2)
             desk = Desk(WIDTH, HEIGHT)
             maze = Maze(desk)
             variant = variants[generated % len(variants)]
@@ -94,6 +113,5 @@ if __name__ == "__main__":
             print(variant[0])
             maze.on_dead_end = variant[1]
             maze.choices = variant[2]
-            time.sleep(2)
 
     renderer.quit()

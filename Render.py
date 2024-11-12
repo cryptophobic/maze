@@ -26,6 +26,7 @@ class Render:
                 blue_effect = 60 if random.choice(range(10)) > 4 else 50
                 color = (30, 30, blue_effect) if desk[x][y].ways == 0 else (255, 255, 255)
                 brick_color = (0, 0, 0) if desk[x][y].fixed else (100, 0, 0)
+                brick_color = (0, 100, 0) if desk[x][y].passing else brick_color
                 brick_color = (30, 30, blue_effect) if desk[x][y].ways == 0 else brick_color
 
                 pygame.draw.rect(self.screen, brick_color, pygame.Rect(top_left[0], top_left[1], self.width, self.width))

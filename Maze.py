@@ -1,8 +1,10 @@
 import random
+from collections import deque
 from enum import Enum
 from typing import List, Tuple
 
-from Desk import Desk
+from Desk import Desk, Directions
+
 
 class Choice(Enum):
     nothing = 0,

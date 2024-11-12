@@ -1,4 +1,5 @@
 import random
+from collections import deque
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import List, Tuple, Dict
@@ -19,6 +20,7 @@ movements: Dict[Directions, Tuple[int, int]] = {Directions.IDLE: (0, 0), Directi
 class Cell:
     ways: int = 0
     fixed: bool = False
+    passing: bool = False
 
 class Desk:
 
@@ -33,46 +35,29 @@ class Desk:
     def __getitem__(self, item):
         return self.desk[item]
 
+    def solution(self, start: Tuple[int, int], end: Tuple[int, int]) -> List[Tuple[int, int]] | None:
+        queue = deque([(start, [start])])  # store path to trace the solution
+        visited = {start}
+
+        while queue:
+            (x, y), path = queue.popleft()
+            if (x, y) == end:
+                # for (x, y) in path:
+                #     self.desk[x][y].passing = True
+                return path # Return path from start to end
+
+            for direction in [Directions.UP, Directions.DOWN, Directions.LEFT, Directions.RIGHT]:
+                res = self.is_can_move(x, y, direction)
+                (nx, ny) = self.move(x, y, direction)
+
+                if res and (nx, ny) not in visited:
+                    queue.append(((nx, ny), path + [(nx, ny)]))
+                    visited.add((nx, ny))
+
+        return None
+
     def init_desk(self):
         self.desk = [[Cell() for _ in range(self.height)] for _ in range(self.width)]
-        # width_rooms = self.width // 9
-        # width_rooms = 3 if width_rooms > 3 else width_rooms
-        # room_width = 0
-        # if width_rooms > 0:
-        #     room_width_place = self.width // width_rooms
-        #     room_width = room_width_place // 3
-        #
-        # height_rooms = self.height // 9
-        # height_rooms = 3 if height_rooms > 3 else height_rooms
-        # room_height = 0
-        # if width_rooms > 0:
-        #     room_height_place = self.height // height_rooms
-        #     room_height = room_height_place // 3
-        #
-        # for w in range(width_rooms):
-        #     for h in range(height_rooms):
-        #         for x in range(room_width):
-        #             for y in range(room_height):
-        #                 hor = x + room_width * 2 *(w + 1)
-        #                 vert = y + room_height * 2 * (h + 1)
-        #                 ways = Directions.ALL
-        #                 if x == 0:
-        #                     ways -= Directions.LEFT
-        #                 if y == 0:
-        #                     ways -= Directions.UP
-        #
-        #
-        #                 if x == room_width - 1:
-        #                     ways -= Directions.RIGHT
-        #                 if y == room_height - 1:
-        #                     ways -= Directions.DOWN
-        #                 self.desk[hor][vert].ways = ways
-        #                 if x == 0 and y == 1:
-        #                     self.desk[hor][vert].ways = Directions.IDLE
-        #                     # self.predefined.append((hor, vert))
-        #                 else:
-        #                     self.desk[hor][vert].fixed = True
-
 
     def move(self, x: int, y: int, direction: Directions = Directions.IDLE) -> Tuple[int, int]:
         return x + movements[direction][0], y + movements[direction][1]
@@ -81,6 +66,11 @@ class Desk:
         (x, y) = self.move(x, y, direction)
         res = self.width > x >= 0 and 0 <= y < self.height
         return res and 0 == self.desk[x][y].ways
+
+    def is_can_move(self, x: int, y: int, direction: Directions = Directions.IDLE) -> bool:
+        (nx, ny) = self.move(x, y, direction)
+        res = self.width > nx >= 0 and 0 <= ny < self.height
+        return res and self.desk[x][y].ways & direction == direction
 
     def move_rand(self, x, y) -> Tuple[int, int] | None:
         directions = [Directions.UP, Directions.DOWN, Directions.LEFT, Directions.RIGHT]
